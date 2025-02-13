@@ -52,7 +52,7 @@ const fetchData = async () => {
 
 ### Video Tutorial
 :::video
-https://www.youtube.com/watch?v=6wJ52H0aq9Q
+https://www.youtube.com/embed/qrNtXX2bA74?si=QvmuPYnY9ID8lTeM
 :::
 
 ### Mapa de Ejemplo
