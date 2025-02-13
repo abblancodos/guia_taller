@@ -4,9 +4,9 @@
 Bienvenido a la guía completa de desarrollo web. Este documento cubre varios temas esenciales.
 
 ### Contenido Destacado
-!!! important
+:::important
 Este es un bloque de contenido importante que debería estilizarse de manera especial.
-!!!
+:::
 
 ## Código de Ejemplo
 
@@ -51,14 +51,14 @@ const fetchData = async () => {
 ## Recursos Multimedia
 
 ### Video Tutorial
-!!! video
+:::video
 https://www.youtube.com/watch?v=6wJ52H0aq9Q
-!!!
+:::
 
 ### Mapa de Ejemplo
-!!! image
+:::image
 https://upload.wikimedia.org/wikipedia/commons/7/76/Croatia_location_map.svg
-!!!
+:::
 
 ## Ejemplos de Formato
 
@@ -70,13 +70,13 @@ https://upload.wikimedia.org/wikipedia/commons/7/76/Croatia_location_map.svg
 | Soporte        | Email  | 24/7 | Dedicado   |
 
 ### Listas
-!!! info
+:::info
 Lista de verificación para el desarrollo:
 - [x] Planificación del proyecto
 - [x] Diseño de la interfaz
 - [ ] Implementación del backend
 - [ ] Pruebas de integración
-!!!
+:::
 
 ### Citas y Referencias
 > El buen código es su mejor documentación. Cuando estés a punto de añadir un comentario, pregúntate: "¿Cómo puedo mejorar el código para que este comentario no sea necesario?"
@@ -84,13 +84,13 @@ Lista de verificación para el desarrollo:
 
 ## Notas Especiales
 
-!!! warning
+:::warning
 Asegúrate de hacer respaldo de tus archivos antes de realizar cambios importantes.
-!!!
+:::
 
-!!! tip
+:::tip
 Utiliza herramientas de control de versiones como Git para mantener un historial de cambios.
-!!!
+:::
 
 ### Ejemplo de Diagrama
 ```mermaid
@@ -109,6 +109,6 @@ graph TD
 - [Foro de la Comunidad](#)
 - [Centro de Ayuda](#)
 
-!!! success
+:::success
 ¡Has completado la revisión de este documento de ejemplo!
-!!!
+:::
