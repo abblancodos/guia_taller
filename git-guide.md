@@ -110,7 +110,7 @@ En Ubuntu/Debian:
 sudo apt install gh
 ```
 
-Una vez instalado, necesitas autenticarte. Lo haremos usando HTTPS, que es el método recomendado:
+Una vez instalado, necesitas autenticarte. En este curso utilizaremos HTTPS:
 
 ```bash
 gh auth login
@@ -122,13 +122,22 @@ Durante el proceso de autenticación:
 3. Elige `Login with a web browser`
 4. Se abrirá tu navegador para completar la autenticación
 
-:::tip
-HTTPS es el método recomendado porque:
-- Es más fácil de configurar
-- Funciona a través de firewalls corporativos
-- No requiere generar ni gestionar claves SSH
-- Utiliza el mismo token para gh y para git
-  :::
+:::info
+Existen dos formas principales de autenticarse con GitHub:
+
+**HTTPS**:
+- Usa tokens de acceso personal
+- Más simple de configurar
+- Es el método que usaremos en el curso
+
+**SSH (Secure Shell)**:
+- Utiliza un par de llaves (pública y privada)
+- Más seguro para uso profesional
+- Requiere generar llaves SSH y añadirlas a GitHub
+- Común en entornos empresariales
+
+Si en el futuro trabajas en un equipo de desarrollo, probablemente uses SSH, pero para aprender los conceptos básicos de Git, HTTPS es suficiente y más directo.
+:::
 
 Una vez autenticado, gh configurará automáticamente Git para usar las mismas credenciales, lo que significa que no necesitarás autenticarte por separado para comandos git.
 
@@ -624,3 +633,4 @@ git commit -m "Mensaje original"
 :::tip
 Mantén un `.gitignore` actualizado para evitar commits accidentales de archivos no deseados
 :::
+
