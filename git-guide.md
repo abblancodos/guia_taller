@@ -246,6 +246,7 @@ git reset HEAD archivo # Quitar un archivo de staging
 ```
 
 :::info
+
 **¿Qué es HEAD?**
 HEAD es simplemente un puntero que indica el último commit de tu rama actual. Es como un "estás aquí" en el mapa de tu repositorio. Cuando usas `git reset HEAD`, le estás diciendo a Git "quiero que este archivo vuelva al estado en que estaba en el último commit".
 
@@ -256,9 +257,10 @@ Otros usos comunes de HEAD:
 
 :::
 
+:::
+
 :::warning
 El área de staging mantiene una copia de tus archivos. Si modificas un archivo después de añadirlo a staging, necesitarás hacer `git add` nuevamente para incluir los nuevos cambios.
-
 :::
 
 Ahora puedes crear un commit con estos cambios:
