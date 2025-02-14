@@ -375,7 +375,8 @@ Antes de hacer un reset hard:
 1. Verifica dos veces el commit al que quieres volver
 2. Considera usar `git stash` si no estás seguro
 3. Recuerda que puedes usar `git reflog` para recuperar commits "perdidos" (pero solo por tiempo limitado)
-   :::
+
+:::
 
 #### Escenarios comunes de sincronización
 
@@ -603,11 +604,13 @@ Esta tabla muestra las diferentes estrategias de recuperación y sus consecuenci
 | Revertir commit público | `git revert <commit>` | ✅ Crea nuevo commit que deshace cambios | Cuando necesitas deshacer cambios ya publicados |
 
 :::important
+
 Antes de realizar operaciones potencialmente destructivas:
 1. Verifica dos veces el comando que vas a ejecutar
 2. Considera hacer una copia de seguridad
 3. Si es posible, prueba en una rama temporal primero
-   :::
+
+:::
 
 ### Problemas Comunes y Soluciones
 
