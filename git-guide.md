@@ -253,10 +253,12 @@ Otros usos comunes de HEAD:
 - `HEAD~1`: Commit anterior al actual
 - `HEAD~2`: Dos commits antes
 - `HEAD^`: Otra forma de referirse al commit anterior
-  :::
+
+:::
 
 :::warning
 El área de staging mantiene una copia de tus archivos. Si modificas un archivo después de añadirlo a staging, necesitarás hacer `git add` nuevamente para incluir los nuevos cambios.
+
 :::
 
 Ahora puedes crear un commit con estos cambios:
