@@ -1,16 +1,4 @@
-# Guía Completa de Git y GitHub
-
-## Tabla de Contenidos
-- [Diferencia entre Git y GitHub](#diferencia-entre-git-y-github)
-- [Instalación y Configuración](#instalación-y-configuración)
-  - [Windows](#windows)
-  - [Linux](#linux)
-- [GitHub CLI (gh)](#github-cli-gh)
-- [Flujo Básico de Trabajo](#flujo-básico-de-trabajo)
-- [Trabajo en Equipo](#trabajo-en-equipo)
-- [Buenas Prácticas](#buenas-prácticas)
-- [Resolución de Problemas Comunes](#resolución-de-problemas-comunes)
-- [Cheatsheet](#cheatsheet)
+# Introducción a Git y Github
 
 ## Diferencia entre Git y GitHub
 
@@ -140,7 +128,7 @@ HTTPS es el método recomendado porque:
 - Funciona a través de firewalls corporativos
 - No requiere generar ni gestionar claves SSH
 - Utiliza el mismo token para gh y para git
-:::
+  :::
 
 Una vez autenticado, gh configurará automáticamente Git para usar las mismas credenciales, lo que significa que no necesitarás autenticarte por separado para comandos git.
 
@@ -318,8 +306,96 @@ git rebase main
 El rebase reescribe la historia de tu rama, colocando tus commits después de los últimos cambios de la rama principal. Esto mantiene una historia más limpia y lineal.
 
 :::warning
-Nunca hagas rebase de ramas que has compartido con otros desarrolladores, ya que esto puede causar problemas de sincronización.
+El rebase reescribe el historial de commits, creando nuevos commits con diferente hash aunque tengan el mismo contenido. Si ya has compartido tu rama (push), otros desarrolladores pueden tener la versión anterior de la historia. Cuando intenten sincronizar sus cambios, Git verá dos historias diferentes y creará conflictos difíciles de resolver.
+
+**Regla de oro**: Solo hacer rebase en ramas locales que no han sido compartidas (pushed).
+
+Para ramas compartidas, usa `git merge` en su lugar.
 :::
+
+### Entendiendo Git Reset
+
+Git reset es una herramienta poderosa que puede ayudarte a sincronizar tu repositorio, pero es importante entender sus diferentes modos:
+
+```mermaid
+graph TD
+    A[git reset] --> B{Tipo de reset}
+    B -->|--soft| C[Mantiene cambios en staging]
+    B -->|--mixed| D[Mantiene cambios sin staging]
+    B -->|--hard| E[Elimina cambios]
+```
+
+#### Reset Soft
+```bash
+git reset --soft HEAD~1
+```
+- Deshace el último commit
+- Mantiene los cambios en staging
+- Útil cuando quieres reorganizar commits sin perder cambios
+- **Caso de uso**: "Oops, cometí un error en el mensaje del commit"
+
+#### Reset Mixed (default)
+```bash
+git reset HEAD~1
+```
+- Deshace el último commit
+- Mantiene los cambios pero fuera de staging
+- **Caso de uso**: "Quiero reorganizar estos cambios en varios commits"
+
+#### Reset Hard
+```bash
+git reset --hard HEAD~1
+```
+- Deshace el último commit
+- Elimina los cambios completamente
+- ⚠️ **Peligroso**: Los cambios se pierden permanentemente
+- **Caso de uso**: "Quiero descartar estos cambios y volver al estado anterior"
+
+:::important
+Antes de hacer un reset hard:
+1. Verifica dos veces el commit al que quieres volver
+2. Considera usar `git stash` si no estás seguro
+3. Recuerda que puedes usar `git reflog` para recuperar commits "perdidos" (pero solo por tiempo limitado)
+   :::
+
+#### Escenarios comunes de sincronización
+
+1. **Rama local adelantada del remoto**:
+```bash
+# Ver diferencias
+git fetch
+git status
+
+# Opción 1: Mantener cambios locales
+git push -f  # ⚠️ Cuidado con force push
+
+# Opción 2: Usar cambios remotos
+git reset --hard origin/main
+```
+
+2. **Cambios locales sin commit que quieres descartar**:
+```bash
+# Ver qué cambiaría
+git checkout -- . --dry-run
+
+# Descartar cambios
+git checkout -- .
+# o
+git reset --hard HEAD
+```
+
+3. **Mezclar cambios locales y remotos**:
+```bash
+# Guardar cambios locales
+git stash
+
+# Actualizar con cambios remotos
+git pull
+
+# Recuperar cambios locales
+git stash pop
+# Resolver conflictos si los hay
+```
 
 ### Resolución de Conflictos
 
@@ -512,7 +588,7 @@ Antes de realizar operaciones potencialmente destructivas:
 1. Verifica dos veces el comando que vas a ejecutar
 2. Considera hacer una copia de seguridad
 3. Si es posible, prueba en una rama temporal primero
-:::
+   :::
 
 ### Problemas Comunes y Soluciones
 
@@ -548,4 +624,3 @@ git commit -m "Mensaje original"
 :::tip
 Mantén un `.gitignore` actualizado para evitar commits accidentales de archivos no deseados
 :::
-
