@@ -2,6 +2,64 @@
 
 ## Diferencia entre Git y GitHub
 
+:::resources
+!!!link
+title: Git Official Website
+description: Official website for Git, where you can download and learn more about Git.
+link: https://git-scm.com
+!!!
+!!!link
+title: GitHub Official Website
+description: Official website for GitHub, a platform for version control and collaboration.
+link: https://github.com
+!!!
+!!!link
+title: Git for Windows Download
+description: Download the official Git installer for Windows.
+link: https://git-scm.com/download/win
+!!!
+!!!link
+title: GitHub CLI Documentation
+description: Official documentation for GitHub CLI (gh), a command-line tool for GitHub.
+link: https://cli.github.com
+!!!
+!!!link
+title: Git Cheatsheet
+description: A quick reference guide for Git commands and workflows.
+link: https://training.github.com/downloads/github-git-cheat-sheet/
+!!!
+!!!link
+title: Git Branching Model
+description: A guide to understanding Git branching and workflows.
+link: https://nvie.com/posts/a-successful-git-branching-model/
+!!!
+!!!link
+title: Git Reset Explained
+description: A detailed explanation of Git reset and its modes.
+link: https://git-scm.com/docs/git-reset
+!!!
+!!!link
+title: Git Rebase vs Merge
+description: A comparison of Git rebase and merge, and when to use each.
+link: https://www.atlassian.com/git/tutorials/merging-vs-rebasing
+!!!
+!!!link
+title: Git Stash Documentation
+description: Official documentation for Git stash, used to temporarily save changes.
+link: https://git-scm.com/docs/git-stash
+!!!
+!!!link
+title: Git Reflog Documentation
+description: Official documentation for Git reflog, used to recover lost commits.
+link: https://git-scm.com/docs/git-reflog
+!!!
+!!!link
+title: Git Ignore Documentation
+description: Official documentation for .gitignore, used to exclude files from Git tracking.
+link: https://git-scm.com/docs/gitignore
+!!!
+:::
+
 En el mundo del desarrollo de software, es común escuchar los términos Git y GitHub usados de manera intercambiable, pero representan herramientas distintas con propósitos complementarios.
 
 Git es un sistema de control de versiones distribuido creado por Linus Torvalds en 2005. Imagina Git como una máquina del tiempo para tu código: te permite registrar los cambios realizados en tus archivos a lo largo del tiempo, volver a versiones anteriores si algo sale mal, y trabajar en diferentes características simultáneamente sin interferir entre ellas. Es como tener puntos de guardado en un videojuego, pero con la capacidad de crear líneas temporales alternativas.
