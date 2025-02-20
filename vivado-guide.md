@@ -4,7 +4,7 @@ Esta guía te ayudará a configurar y utilizar scripts TCL para automatizar fluj
 
 ## Requisitos Previos
 
-::: resources
+:::resources
 !!!link
 title: Git Official Website
 description: Official website for Git, where you can download and learn more about Git.
@@ -27,7 +27,7 @@ jumpto: https://gnuwin32.sourceforge.net/packages/make.htm
 !!!
 :::
 
-::: important
+:::important
 Antes de comenzar, asegúrate de tener instalado:
 - Xilinx Vivado (Versión 2019.1 o superior)
 - Git (para control de versiones)
@@ -45,7 +45,7 @@ Tienes dos métodos principales para instalar Git:
 
 WinGet es el gestor de paquetes oficial de Windows que permite instalar aplicaciones de forma sencilla desde la línea de comandos.
 
-::: info
+:::info
 WinGet viene preinstalado en Windows 11 y versiones recientes de Windows 10. Si no lo tienes instalado, Windows te dirigirá automáticamente a la Microsoft Store para instalarlo.
 :::
 
@@ -79,20 +79,20 @@ git config --global user.email "tu@email.com"
 
 ### 2. Instalar GNU Make
 
-::: info
+:::info
 GNU Make es necesario para ejecutar los scripts de automatización. En la página de descarga (https://gnuwin32.sourceforge.net/packages/make.htm), busca el texto "If you download the Setup program of the package" y haz clic en el hipervínculo "Setup program" para descargar el instalador.
 :::
 
 ### 3. Instalar GTKWave (Opcional)
 
-::: tip
+:::tip
 GTKWave es un visualizador de formas de onda ligero y alternativo al de Vivado. 
 Descárgalo de: https://gtkwave.sourceforge.net/
 :::
 
 ### 4. Configurar Variables de Entorno
 
-::: warning
+:::warning
 Es crucial configurar correctamente las variables de entorno para que los comandos funcionen desde cualquier ubicación.
 :::
 
@@ -109,12 +109,10 @@ C:\Xilinx\Vivado\2019.1\lib\win64.o
 [Ruta donde instalaste GTKWave]
 ```
 
-![Configuración de Variables de Entorno](https://placehold.co/600x400)
-*Ventana de configuración de variables de entorno en Windows*
 
 ### 4. Verificar la Instalación
 
-::: success
+:::success
 Abre una terminal y ejecuta estos comandos para verificar la instalación:
 ```bash
 make -h    # Debería mostrar la ayuda de Make
@@ -125,13 +123,15 @@ gtkwave -h # Debería mostrar la ayuda de GTKWave
 
 ## Scripts de Automatización
 
-::: warning
+
+:::info
+Para facilitar la creación de la estructura del proyecto, puedes utilizar uno de los siguientes scripts según tu sistema operativo:
+:::
+
+:::warning
 ¡IMPORTANTE! Antes de ejecutar cualquiera de estos scripts, asegúrate de estar ubicado en el directorio donde deseas tener todos los proyectos del taller. Los scripts crearán la estructura de directorios en la ubicación donde los ejecutes.
 :::
 
-::: info
-Para facilitar la creación de la estructura del proyecto, puedes utilizar uno de los siguientes scripts según tu sistema operativo:
-:::
 
 ### Script para Bash (Linux/Mac/Git Bash)
 Para crear el script:
@@ -177,7 +177,7 @@ chmod +x setup.sh
 
 ### Script para PowerShell (Windows)
 
-::: tip
+:::tip
 Hay varias formas de abrir PowerShell en la carpeta deseada:
 
 1. **Usando el Explorador de Windows**:
@@ -232,13 +232,13 @@ Para ejecutar el script:
 .\setup.ps1
 ```
 
-::: tip
+:::tip
 La carpeta `build_scripts` sirve como template. Cuando necesites crear un nuevo laboratorio, puedes copiarla y renombrarla según necesites.
 :::
 
 ## Estructura del Proyecto
 
-::: info
+:::info
 El proyecto sigue una estructura específica para organizar los archivos fuente, scripts y builds:
 :::
 
@@ -296,13 +296,11 @@ El proyecto sigue una estructura específica para organizar los archivos fuente,
 
 ```
 
-![Estructura del Proyecto en Explorer](https://placehold.co/600x400)
-*Vista de la estructura del proyecto en Windows Explorer*
 
 ## Archivos Importantes
 
 ### globals.tcl
-::: important
+:::important
 Este archivo contiene las variables globales del proyecto:
 - Nombre del módulo TOP
 - Nombre del módulo de simulación
@@ -310,7 +308,7 @@ Este archivo contiene las variables globales del proyecto:
 :::
 
 ### create_project.tcl
-::: info
+:::info
 Script para crear un nuevo proyecto de Vivado:
 - Configuración de IP cores
 - Definición de carpetas fuente
@@ -318,7 +316,7 @@ Script para crear un nuevo proyecto de Vivado:
 :::
 
 ### update_project.tcl
-::: tip
+:::tip
 Usado para actualizar proyectos existentes:
 - Agregar nuevos archivos fuente
 - Modificar configuraciones
@@ -327,7 +325,7 @@ Usado para actualizar proyectos existentes:
 
 ## Comandos Disponibles
 
-::: success
+:::success
 Estos son los comandos principales que puedes usar con `make`:
 :::
 
@@ -343,12 +341,11 @@ Estos son los comandos principales que puedes usar con `make`:
 | `make flow` | Ejecuta el flujo completo |
 | `make clean` | Limpia archivos temporales |
 
-![Ejecución de Comandos Make](https://placehold.co/600x400)
-*Terminal mostrando la ejecución de comandos make*
+
 
 ## Ejemplo de Uso
 
-::: tip
+:::tip
 Para ejecutar un proyecto ejemplo:
 1. Abre una terminal en la carpeta del proyecto
 2. Ejecuta `make create` para crear el proyecto
@@ -358,7 +355,7 @@ Para ejecutar un proyecto ejemplo:
 
 ## Troubleshooting
 
-::: warning
+:::warning
 Problemas comunes y soluciones:
 1. **Error: Command not found**
    - Verifica las variables de entorno
@@ -373,7 +370,4 @@ Problemas comunes y soluciones:
    - Verifica la variable de entorno
 :::
 
-::: video
-https://placehold.co/600x400
-*Video tutorial completo del proceso de instalación y uso*
-:::
+
