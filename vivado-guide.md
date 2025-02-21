@@ -121,29 +121,89 @@ gtkwave -h # Debería mostrar la ayuda de GTKWave
 ```
 :::
 
-## Scripts de Automatización
-
-
+## 5. Scripts de Automatización
 :::info
-Para facilitar la creación de la estructura del proyecto, puedes utilizar uno de los siguientes scripts según tu sistema operativo:
+Los scripts de automatización se dividen en dos partes:
+1. Scripts de inicialización: Crean la estructura básica del proyecto y configuran el ejemplo inicial
+2. Scripts de configuración: Preparan el ambiente para nuevos repositorios clonados en src
 :::
 
-:::warning
-¡IMPORTANTE! Antes de ejecutar cualquiera de estos scripts, asegúrate de estar ubicado en el directorio donde deseas tener todos los proyectos del taller. Los scripts crearán la estructura de directorios en la ubicación donde los ejecutes.
-:::
-
-
-### Script para Bash (Linux/Mac/Git Bash)
-Para crear el script:
-```bash
-nano setup.sh
+### 5.1 Estructura del Proyecto
+La estructura que crearán los scripts será la siguiente:
 ```
-Copia y pega el siguiente contenido (en nano puedes usar Ctrl+Shift+V para pegar):
-```bash
-# Bash Script (setup_structure.sh)
-#!/bin/bash
+~/Taller/                  # Carpeta base (puede tener cualquier nombre)
+├── build/                 # Carpeta para archivos generados
+│   └── ejemplo1/         # Archivos TCL y proyecto Vivado
+├── scripts/              # Scripts del flujo de Vivado
+└── src/                  # Código fuente
+    └── ejemplo1/         # Sources del ejemplo
+```
 
-# Salir en caso de error
+### 5.2 Inicialización de la Estructura
+:::warning
+¡IMPORTANTE! Antes de ejecutar el script de inicialización:
+1. Crea una carpeta para el taller (ej: "Taller")
+2. Colócate dentro de esa carpeta
+3. Ejecuta el script correspondiente a tu sistema operativo
+:::
+
+#### PowerShell (Windows)
+```powershell
+$ErrorActionPreference = "Stop"
+
+# Crear directorio temporal para el clon
+New-Item -ItemType Directory -Path temp_repo -Force
+
+# Clonar el repositorio
+git clone https://github.com/HalfS0ur/vivado_tcl_scripts.git temp_repo
+
+# Asegurarse que estamos en la carpeta base del taller (ej: ~/Taller)
+$baseDir = Get-Location
+
+# Crear la estructura de directorios necesaria
+New-Item -ItemType Directory -Path scripts -Force
+New-Item -ItemType Directory -Path src -Force
+New-Item -ItemType Directory -Path build/ejemplo1 -Force
+
+# Copiar la carpeta scripts a la raíz
+Copy-Item -Path "temp_repo/scripts/*" -Destination "scripts" -Recurse -Force
+
+# Copiar la carpeta ejemplo1 a src
+Copy-Item -Path "temp_repo/src/ejemplo1" -Destination "src" -Recurse -Force
+
+# Copiar los archivos TCL para ejemplo1
+Copy-Item -Path "temp_repo/clean_tcl_scripts/*" -Destination "build/ejemplo1" -Recurse -Force
+
+# Actualizar las rutas en los archivos TCL de ejemplo1
+$projectPath = Join-Path $baseDir "build/ejemplo1"
+$rootPath = $baseDir
+
+# Update globals.tcl
+$globalsPath = Join-Path $projectPath "globals.tcl"
+$globalsContent = Get-Content $globalsPath -Raw
+$globalsContent = $globalsContent -replace 'set ROOT_PATH \$PROJECT_PATH/../..', "set ROOT_PATH `"$rootPath`""
+$globalsContent | Set-Content $globalsPath
+
+# Update create_project.tcl y update_project.tcl
+$files = @("create_project.tcl", "update_project.tcl")
+foreach ($file in $files) {
+    $filePath = Join-Path $projectPath $file
+    $content = Get-Content $filePath -Raw
+    # Reemplazar los paths para que coincidan con nuestra estructura
+    $content = $content -replace "REPO_LAB/ejercicioN", "ejemplo1"
+    $content = $content -replace "set REPORTS_FOLDR.*", "set REPORTS_FOLDR `"rpt`""
+    $content | Set-Content $filePath
+}
+
+# Limpiar el directorio temporal
+Remove-Item -Path temp_repo -Recurse -Force
+
+Write-Host "Estructura de directorios creada exitosamente en $baseDir!"
+```
+
+#### Bash (Linux/MacOS)
+```bash
+#!/bin/bash
 set -e
 
 # Crear directorio temporal para el clon
@@ -152,176 +212,68 @@ mkdir -p temp_repo
 # Clonar el repositorio
 git clone https://github.com/HalfS0ur/vivado_tcl_scripts.git temp_repo
 
+# Asegurarse que estamos en la carpeta base del taller (ej: ~/Taller)
+BASE_DIR=$(pwd)
+
 # Crear la estructura de directorios necesaria
-mkdir -p scripts \
-         src \
-         build/laboratorio1 \
-         build/build_scripts \
-         build/ejemplo1
+mkdir -p scripts
+mkdir -p src
+mkdir -p build/ejemplo1
 
 # Copiar la carpeta scripts a la raíz
 cp -r temp_repo/scripts/* scripts/
 
-# Copiar los archivos de clean_tcl_scripts a las carpetas necesarias
-cp -r temp_repo/clean_tcl_scripts/* build/laboratorio1/
-cp -r temp_repo/clean_tcl_scripts/* build/build_scripts/
+# Copiar la carpeta ejemplo1 a src
+cp -r temp_repo/src/ejemplo1 src/
+
+# Copiar los archivos TCL para ejemplo1
 cp -r temp_repo/clean_tcl_scripts/* build/ejemplo1/
 
-# Copiar el ejemplo1 del repositorio a src (ahora desde la ubicación correcta)
-if [ -d "temp_repo/src/ejemplo1" ]; then
-    cp -r temp_repo/src/ejemplo1 src/
-    echo "Carpeta ejemplo1 copiada exitosamente a src"
-else
-    echo "AVISO: La carpeta ejemplo1 no se encontró en el repositorio (src/ejemplo1)"
-fi
+# Actualizar las rutas en los archivos TCL de ejemplo1
+PROJECT_PATH="$BASE_DIR/build/ejemplo1"
+ROOT_PATH="$BASE_DIR"
 
-# Actualizar los archivos TCL en build/ejemplo1 para que apunten al ejemplo correcto
-EJEMPLO_PATH="build/ejemplo1"
-if [ -d "$EJEMPLO_PATH" ]; then
-    # Actualizar create_project.tcl y update_project.tcl
-    for file in create_project.tcl update_project.tcl; do
-        if [ -f "$EJEMPLO_PATH/$file" ]; then
-            sed -i "s/REPO_LAB/ejemplo1/g" "$EJEMPLO_PATH/$file"
-            sed -i "s/ejercicioN/./g" "$EJEMPLO_PATH/$file"
-        fi
-    done
-    echo "Archivos TCL actualizados para ejemplo1"
-fi
+# Update globals.tcl
+sed -i "s|set ROOT_PATH \\\$PROJECT_PATH/../..|set ROOT_PATH \"$ROOT_PATH\"|" "$PROJECT_PATH/globals.tcl"
+
+# Update create_project.tcl y update_project.tcl
+for file in "create_project.tcl" "update_project.tcl"; do
+    # Reemplazar los paths para que coincidan con nuestra estructura
+    sed -i "s|REPO_LAB/ejercicioN|ejemplo1|g" "$PROJECT_PATH/$file"
+    sed -i "s|set REPORTS_FOLDR.*|set REPORTS_FOLDR \"rpt\"|" "$PROJECT_PATH/$file"
+done
 
 # Limpiar el directorio temporal
 rm -rf temp_repo
 
-echo "Estructura de directorios creada exitosamente!"
+echo "Estructura de directorios creada exitosamente en $BASE_DIR!"
 ```
 
-Para guardar el archivo en nano:
-1. Presiona `Ctrl + X` para salir
-2. Presiona `Y` para confirmar que quieres guardar
-3. Presiona `Enter` para confirmar el nombre del archivo
-
-Para ejecutar el script:
-```bash
-chmod +x setup.sh
-./setup.sh
-```
-
-### Script para PowerShell (Windows)
-
-:::tip
-Hay varias formas de abrir PowerShell en la carpeta deseada:
-
-1. **Usando el Explorador de Windows**:
-   - Navega a la carpeta donde quieres crear el proyecto
-   - Mantén presionada la tecla Shift
-   - Haz clic derecho en un espacio vacío de la carpeta
-   - Selecciona "Abrir la ventana de PowerShell aquí"
-   - *Nota*: En Windows 11, primero selecciona "Mostrar más opciones" y luego verás la opción de PowerShell
-
-2. **Desde la barra de direcciones**:
-   - Navega a la carpeta en el Explorador de Windows
-   - Haz clic en la barra de direcciones
-   - Escribe "powershell" y presiona Enter
-:::
-
-Para crear el script, en PowerShell ejecuta:
-```powershell
-notepad setup.ps1
-```
-
-Copia y pega el siguiente contenido en el Notepad que se abrirá:
-```powershell
-# Bash Script (configure_vivado_project.sh)
-#!/bin/bash
-
-# Get current directory name as project name
-PROJECT_NAME=$(basename "$(pwd)")
-
-# Path to build directory and project directory
-BUILD_PATH="../../build"
-PROJECT_PATH="$BUILD_PATH/$PROJECT_NAME"
-
-# Verify the build directory exists
-if [ ! -d "$PROJECT_PATH" ]; then
-    echo "Error: Build directory for $PROJECT_NAME not found in $BUILD_PATH"
-    exit 1
-fi
-
-# Get absolute paths
-ROOT_PATH=$(realpath "../..")
-
-# Update globals.tcl
-sed -i "s|set ROOT_PATH \$PROJECT_PATH/../..|set ROOT_PATH \"$ROOT_PATH\"|" "$PROJECT_PATH/globals.tcl"
-
-# Update create_project.tcl and update_project.tcl
-for file in "create_project.tcl" "update_project.tcl"; do
-    sed -i "s/REPO_LAB/$PROJECT_NAME/g" "$PROJECT_PATH/$file"
-    sed -i "s/ejercicioN/./g" "$PROJECT_PATH/$file"
-done
-
-# Change to project directory and create project
-cd "$PROJECT_PATH"
-echo "Creating Vivado project..."
-make create
-
-echo "Setup complete! Project created in $PROJECT_PATH"
-```
-
-Para ejecutar el script:
-```powershell
-powershell -ExecutionPolicy Bypass -File setup.ps1
-```
-
-:::tip
-La carpeta `build_scripts` sirve como template. Cuando necesites crear un nuevo laboratorio, puedes copiarla y renombrarla según necesites.
-:::
-
-### 6. Configuración de Proyectos Individuales
+### 5.3 Configuración de Nuevos Repositorios
 :::info
-Una vez que hayas configurado el entorno de desarrollo, puedes usar estos scripts para configurar cada proyecto individual dentro de la estructura. Estos scripts deben colocarse en la carpeta del proyecto dentro de `src/`.
+Después de clonar un nuevo repositorio en la carpeta `src`, necesitarás configurar los archivos TCL correspondientes en la carpeta `build`. Los siguientes scripts automatizan este proceso.
 :::
 
-:::warning
-¡IMPORTANTE! Estos scripts deben ejecutarse desde dentro de la carpeta de tu proyecto en `src/`. El nombre de la carpeta donde ejecutes el script será usado como nombre del proyecto en la carpeta `build/`.
-:::
-
-#### Windows PowerShell
+#### PowerShell (Windows)
 ```powershell
-# PowerShell Script (setup_vivado_project.ps1)
+# Script configure_tcl.ps1
+
 # Get current directory name as project name
 $projectName = Split-Path -Leaf (Get-Location)
 
-# Create build directory if it doesn't exist (two levels up)
+# Path to build directory and project directory
 $buildPath = "..\..\build"
-if (-not (Test-Path $buildPath)) {
-    Write-Host "Creating build directory..."
-    New-Item -ItemType Directory -Path $buildPath | Out-Null
-}
-
-# Create project directory in build
 $projectPath = Join-Path $buildPath $projectName
+
+# Verify the build directory exists
 if (-not (Test-Path $projectPath)) {
-    Write-Host "Creating project directory..."
-    New-Item -ItemType Directory -Path $projectPath | Out-Null
+    Write-Host "Creando directorio $projectPath..."
+    New-Item -ItemType Directory -Path $projectPath -Force
+    # Copiar archivos TCL template desde ejemplo1
+    Copy-Item -Path "..\..\build\ejemplo1\*" -Destination $projectPath -Recurse -Force
 }
 
-# Download TCL scripts
-$tclFiles = @(
-    "globals.tcl",
-    "create_project.tcl",
-    "update_project.tcl",
-    "Makefile"
-)
-
-$baseUrl = "https://raw.githubusercontent.com/HalfS0ur/vivado_tcl_scripts/main/clean_tcl_scripts"
-
-foreach ($file in $tclFiles) {
-    $url = "$baseUrl/$file"
-    $outputPath = Join-Path $projectPath $file
-    Write-Host "Downloading $file..."
-    Invoke-WebRequest -Uri $url -OutFile $outputPath
-}
-
-# Update paths in TCL files
+# Get absolute paths
 $rootPath = Resolve-Path "..\.."
 
 # Update globals.tcl
@@ -335,7 +287,7 @@ $files = @("create_project.tcl", "update_project.tcl")
 foreach ($file in $files) {
     $filePath = Join-Path $projectPath $file
     $content = Get-Content $filePath -Raw
-    $content = $content -replace "REPO_LAB", $projectName
+    $content = $content -replace "REPO_LAB/ejercicioN", $projectName
     $content = $content -replace "ejercicioN", "."
     $content | Set-Content $filePath
 }
@@ -344,71 +296,106 @@ foreach ($file in $files) {
 Set-Location $projectPath
 Write-Host "Creating Vivado project..."
 make create
+
 Write-Host "Setup complete! Project created in $projectPath"
 ```
 
-#### Linux/macOS Bash
+#### Bash (Linux/MacOS)
 ```bash
 #!/bin/bash
 
 # Get current directory name as project name
 PROJECT_NAME=$(basename "$(pwd)")
 
-# Create build directory if it doesn't exist (two levels up)
+# Path to build directory and project directory
 BUILD_PATH="../../build"
-if [ ! -d "$BUILD_PATH" ]; then
-    echo "Creating build directory..."
-    mkdir -p "$BUILD_PATH"
-fi
-
-# Create project directory in build
 PROJECT_PATH="$BUILD_PATH/$PROJECT_NAME"
+
+# Verify the build directory exists
 if [ ! -d "$PROJECT_PATH" ]; then
-    echo "Creating project directory..."
+    echo "Creando directorio $PROJECT_PATH..."
     mkdir -p "$PROJECT_PATH"
+    # Copiar archivos TCL template desde ejemplo1
+    cp -r ../../build/ejemplo1/* "$PROJECT_PATH/"
 fi
 
-# Download TCL scripts
-TCL_FILES=("globals.tcl" "create_project.tcl" "update_project.tcl" "Makefile")
-BASE_URL="https://raw.githubusercontent.com/HalfS0ur/vivado_tcl_scripts/main/clean_tcl_scripts"
-
-for file in "${TCL_FILES[@]}"; do
-    echo "Downloading $file..."
-    curl -s "$BASE_URL/$file" -o "$PROJECT_PATH/$file"
-done
-
-# Update paths in TCL files
+# Get absolute paths
 ROOT_PATH=$(realpath "../..")
 
 # Update globals.tcl
-sed -i "s|set ROOT_PATH \$PROJECT_PATH/../..|set ROOT_PATH \"$ROOT_PATH\"|" "$PROJECT_PATH/globals.tcl"
+sed -i "s|set ROOT_PATH \\\$PROJECT_PATH/../..|set ROOT_PATH \"$ROOT_PATH\"|" "$PROJECT_PATH/globals.tcl"
 
 # Update create_project.tcl and update_project.tcl
 for file in "create_project.tcl" "update_project.tcl"; do
-    sed -i "s/REPO_LAB/$PROJECT_NAME/g" "$PROJECT_PATH/$file"
-    sed -i "s/ejercicioN/./g" "$PROJECT_PATH/$file"
+    sed -i "s|REPO_LAB/ejercicioN|$PROJECT_NAME|g" "$PROJECT_PATH/$file"
+    sed -i "s|ejercicioN|.|g" "$PROJECT_PATH/$file"
 done
 
 # Change to project directory and create project
 cd "$PROJECT_PATH"
 echo "Creating Vivado project..."
 make create
+
 echo "Setup complete! Project created in $PROJECT_PATH"
 ```
 
-:::success
-Al ejecutar cualquiera de estos scripts en tu carpeta de proyecto:
-1. Se creará una carpeta en `build/` con el mismo nombre que tu carpeta de proyecto
-2. Se descargarán y configurarán los archivos TCL necesarios
-3. Se actualizarán las rutas y nombres en los archivos para que coincidan con tu proyecto
-4. Se ejecutará `make create` para inicializar el proyecto de Vivado
-:::
+### 5.4 Uso de los Scripts
+#### Inicialización del Proyecto
+1. Crea una carpeta para el taller
+2. Colócate dentro de ella
+3. Ejecuta el script de inicialización (PowerShell o Bash)
+4. Verifica que se creó la estructura básica:
+```bash
+ls
+# Deberías ver: build/ scripts/ src/
+```
 
-:::info
-Por ejemplo, si tu proyecto está en `src/mi_repo/proyecto1` y ejecutas el script desde esa ubicación:
-- Se creará `build/proyecto1/` con todos los archivos necesarios
-- Los archivos TCL se configurarán para usar el nombre "proyecto1"
-- Las rutas se actualizarán para apuntar correctamente a tus archivos fuente
+#### Configuración de Nuevo Repositorio
+1. Clona tu repositorio en la carpeta `src`:
+```bash
+cd src
+git clone <tu-repositorio>
+```
+
+2. Copia el script de configuración a la carpeta del proyecto:
+```bash
+cd tu-repositorio
+# Copia configure_tcl.ps1 o configure_tcl.sh aquí
+```
+
+3. Ejecuta el script:
+```bash
+# En Windows:
+.\configure_tcl.ps1
+
+# En Linux/MacOS:
+chmod +x configure_tcl.sh
+./configure_tcl.sh
+```
+
+### 5.5 Verificación
+:::success
+Para verificar que todo se configuró correctamente:
+
+1. Verifica la estructura de directorios:
+```bash
+tree
+~/Taller/
+├── build/
+│   ├── ejemplo1/
+│   └── tu_proyecto/
+├── scripts/
+└── src/
+    ├── ejemplo1/
+    └── tu_proyecto/
+```
+
+2. Prueba el proyecto:
+```bash
+cd build/tu_proyecto
+make create    # Debería crear el proyecto
+make all       # Debería ejecutar el flujo completo
+```
 :::
 
 ## Estructura del Proyecto
